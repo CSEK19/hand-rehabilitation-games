@@ -8,37 +8,27 @@ clock = pygame.time.Clock()
 
 screenWidth = 1280
 screenHeight = 720
-font = pygame.font.SysFont('', 50)
-
-# colorLst = ['red', 'blue', 'green', 'yellow', 'black']
-# colorLst_code = [rgb(239, 71, 111), rgb(17, 138, 178), rgb(6, 214, 160), rgb(255, 209, 102),rgb(64, 61, 57)]
-# shapeLst = ['rectangle', 'triangle', 'circle', 'oval']
-
-
-# easy_colorLst = ['red', 'blue', 'green']
-# easy_colorLst_code = [rgb(239, 71, 111), rgb(17, 138, 178), rgb(6, 214, 160)]
-# easy_shapeLst = ['circle', 'square', 'triangle']
-
-# medium_colorLst = ['red', 'blue', 'green', 'white', 'black']
-# medium_colorLst_code = [rgb(239, 71, 111), rgb(17, 138, 178), rgb(6, 214, 160), rgb(255,255,255),rgb(64, 61, 57)]
-# medium_shapeLst = ['circle', 'square', 'triangle', 'oval']
+font = pygame.font.SysFont('', 70)
 
 
 # hard_colorLst = ['red', 'blue', 'green', 'white', 'black']
-# hard_colorLst_code = [rgb(239, 71, 111), rgb(17, 138, 178), rgb(6, 214, 160), rgb(255,255,255),rgb(64, 61, 57), rgb(218,112,214), rgb(255,127,80)]
+# hard_colorLst_code = [rgb(230, 57, 70), rgb(17, 138, 178), rgb(6, 214, 160), rgb(255,255,255),rgb(64, 61, 57), rgb(218,112,214), rgb(255,127,80)]
 # hard_shapeLst = ['circle', 'square', 'triangle', 'oval', 'star', 'diamond']
 
+border_color = (0,0,0)
+border_width = 2
 
 easy_colorLst = ['red', 'blue', 'green']
-easy_colorLst_code = [(239, 71, 111), (17, 138, 178), (6, 214, 160)]
+easy_colorLst_code = [(230, 57, 70), (17, 138, 178), (6, 214, 160)]
 easy_shapeLst = ['circle', 'square', 'triangle']
 
+
 medium_colorLst = ['red', 'blue', 'green', 'white', 'black']
-medium_colorLst_code = [(239, 71, 111), (17, 138, 178), (6, 214, 160), (255, 255, 255), (64, 61, 57)]
+medium_colorLst_code = [(230, 57, 70), (17, 138, 178), (6, 214, 160), (255, 255, 255), (64, 61, 57)]
 medium_shapeLst = ['circle', 'square', 'triangle', 'oval']
 
-hard_colorLst = ['red', 'blue', 'green', 'white', 'black']
-hard_colorLst_code = [(239, 71, 111), (17, 138, 178), (6, 214, 160), (255, 255, 255), (64, 61, 57), (218, 112, 214), (255, 127, 80)]
+hard_colorLst = ['red', 'blue', 'green', 'white', 'black', 'purple', 'orange']
+hard_colorLst_code = [(230, 57, 70), (17, 138, 178), (6, 214, 160), (255, 255, 255), (64, 61, 57), (218, 112, 214), (255, 127, 80)]
 hard_shapeLst = ['circle', 'square', 'triangle', 'oval', 'star', 'diamond']
 
 
@@ -55,9 +45,9 @@ class MyGame:
     def __init__(self):
         self.score = 0
         self.num_answer = 3
-        self.shapeWidth = 150
-        self.colorLst_code = easy_colorLst_code
+        self.shapeWidth = 175
         self.colorLst = easy_colorLst
+        self.colorLst_code = easy_colorLst_code
         self.shapeLst = easy_shapeLst
         
         self.answerLst = [(random.choice(self.colorLst_code), random.choice(self.shapeLst)) for _ in range(self.num_answer)]
@@ -73,7 +63,7 @@ class MyGame:
             self.colorLst_code = easy_colorLst_code
             self.colorLst = easy_colorLst
             self.shapeLst = easy_shapeLst
-        if(num_answer == 4):
+        elif(num_answer == 4):
             self.colorLst_code = medium_colorLst_code
             self.colorLst = medium_colorLst
             self.shapeLst = medium_shapeLst
@@ -82,13 +72,7 @@ class MyGame:
             self.colorLst = hard_colorLst
             self.shapeLst = hard_shapeLst
 
-        
-        self.answerLst = [(random.choice(self.colorLst_code), random.choice(self.shapeLst)) for _ in range(self.num_answer)]
-        while len(set(self.answerLst))<self.num_answer:
-            self.answerLst = [(random.choice(self.colorLst_code), random.choice(self.shapeLst)) for _ in range(self.num_answer)]
-        
-        self.answer = random.choice(self.answerLst)
-        self.selection = 0
+        self.random_answers()
 
 
 
@@ -108,67 +92,92 @@ class MyGame:
 
 def draw_shape_color(color, shape, index, num_answer, my_game):
     shapeWidth = my_game.shapeWidth
-    gapWidth = shapeWidth // 2  # set gap width to half the shape width
+    gapWidth = shapeWidth // 2 
     totalWidth = shapeWidth * num_answer + gapWidth * (num_answer - 1)
-    left = (screenWidth - totalWidth) // 2 + (shapeWidth + gapWidth) * index
+    left = ((screenWidth - totalWidth) // 2) + (shapeWidth + gapWidth) * index
+    if my_game.num_answer == 4:
+        left -= 0
+    elif my_game.num_answer == 5:
+        left -= 0
+
+
     top = screenHeight * 2 // 3
     ltrb = [left, top, left + shapeWidth, top + shapeWidth]
-     
-
 
     if shape == 'oval':
         pygame.draw.ellipse(screen, color, pygame.Rect(ltrb[0]+50, ltrb[1], shapeWidth-100, shapeWidth))
+        pygame.draw.ellipse(screen, border_color, pygame.Rect(ltrb[0]+50, ltrb[1], shapeWidth-100, shapeWidth), border_width)
+
+
 
     if shape == 'square':
         pygame.draw.rect(screen, color, pygame.Rect(ltrb[0], ltrb[1], shapeWidth, shapeWidth))
+        pygame.draw.rect(screen, border_color, pygame.Rect(ltrb[0], ltrb[1], shapeWidth, shapeWidth), border_width)
+
     
     if shape == 'triangle':
-        pygame.draw.polygon(screen, color, [[(ltrb[0]+ltrb[2])//2, ltrb[1]], [ltrb[0], ltrb[3]], [ltrb[2], ltrb[3]]])
+        triangle_points = [[(ltrb[0]+ltrb[2])//2, ltrb[1]], [ltrb[0], ltrb[3]], [ltrb[2], ltrb[3]]]
+        pygame.draw.polygon(screen, color, triangle_points)
+        pygame.draw.polygon(screen, border_color, triangle_points, border_width)
+
+
+        # pygame.draw.polygon(screen, color, [[(ltrb[0]+ltrb[2])//2, ltrb[1]], [ltrb[0], ltrb[3]], [ltrb[2], ltrb[3]]])
     
     if shape == 'circle':
-        pygame.draw.circle(screen, color, [(ltrb[0]+ltrb[2])//2, (ltrb[1]+ltrb[3])//2], shapeWidth//2)
+        circle_points = [(ltrb[0]+ltrb[2])//2, (ltrb[1]+ltrb[3])//2]
+        pygame.draw.circle(screen, color, circle_points, shapeWidth//2)
+        pygame.draw.circle(screen, border_color, [(ltrb[0]+ltrb[2])//2, (ltrb[1]+ltrb[3])//2], shapeWidth//2, border_width) 
+
+
+        # pygame.draw.circle(screen, color, [(ltrb[0]+ltrb[2])//2, (ltrb[1]+ltrb[3])//2], shapeWidth//2)
 
     if shape == 'star':
         left, top, right, bottom = ltrb
-
-        center_x = (left + right) / 2
-        center_y = (top + bottom) / 2
         width = right - left
         height = bottom - top
-        heart_size = min(width, height) * 0.8
-
-        # Calculate the coordinates of the top left and bottom right corners of the heart
-        heart_tl_x = center_x - heart_size / 2
-        heart_tl_y = center_y - heart_size / 2
-        heart_br_x = center_x + heart_size / 2
-        heart_br_y = center_y + heart_size / 2
-
-        cp1_x = heart_tl_x + heart_size / 4
-        cp1_y = heart_tl_y - heart_size / 4
-        cp2_x = heart_br_x - heart_size / 4
-        cp2_y = heart_tl_y - heart_size / 4
-        cp3_x = heart_br_x + heart_size / 4
-        cp3_y = heart_tl_y + heart_size / 4
-        cp4_x = heart_tl_x - heart_size / 4
-        cp4_y = heart_tl_y + heart_size / 4
-
-        pygame.draw.lines(screen, color, False, [(cp1_x, cp1_y), (center_x, heart_tl_y), (cp2_x, cp2_y)], 5)
-        pygame.draw.lines(screen, color, False, [(cp2_x, cp2_y), (heart_br_x, center_y), (cp3_x, cp3_y)], 5)
-        pygame.draw.lines(screen, color, False, [(cp3_x, cp3_y), (center_x, heart_br_y), (cp4_x, cp4_y)], 5)
-        pygame.draw.lines(screen, color, False, [(cp4_x, cp4_y), (heart_tl_x, center_y), (cp1_x, cp1_y)], 5)
+        centre_coord = (left + width//2, top + height//2)
+        radius = min(width, height) // 2
+        star_points = []
+        for i in range(10):
+            angle = i * 2 * math.pi / 10
+            if i % 2 == 0:
+                x = centre_coord[0] + radius * math.cos(angle - math.pi/2)
+                y = centre_coord[1] + radius * math.sin(angle - math.pi/2)
+            else:
+                x = centre_coord[0] + radius/2 * math.cos(angle - math.pi/2)
+                y = centre_coord[1] + radius/2 * math.sin(angle - math.pi/2)
+            star_points.append((int(x), int(y)))
+        star_points.reverse()
+        pygame.draw.polygon(screen, color, star_points)
+        pygame.draw.polygon(screen, border_color, star_points, border_width)
 
 
 
 
-    
+
     if shape == 'diamond':
-        pygame.draw.polygon(screen, color, [[ltrb[0] + shapeWidth//2, ltrb[1]], [ltrb[0], ltrb[1] + shapeWidth//2], [ltrb[0] + shapeWidth//2, ltrb[1] + shapeWidth], [ltrb[0] + shapeWidth, ltrb[1] + shapeWidth//2]])
+        diamond_points = [(ltrb[0] + shapeWidth//2, ltrb[1]),  # top point
+                        (ltrb[0] + shapeWidth, ltrb[1] + shapeWidth//2),  # right point
+                        (ltrb[0] + shapeWidth//2, ltrb[1] + shapeWidth),  # bottom point
+                        (ltrb[0], ltrb[1] + shapeWidth//2)]  # left point
+
+        # Draw the filled diamond
+        pygame.draw.polygon(screen, color, diamond_points)
+
+        # Draw the diamond border
+        pygame.draw.polygon(screen, border_color, diamond_points, border_width)
+
 
 
 def draw_selection(color, index, num_answer, my_game):
     shapeWidth = my_game.shapeWidth
-    totalWidth = shapeWidth * num_answer + (num_answer - 1) * shapeWidth // 2
-    left = (screenWidth - totalWidth) // 2 + (shapeWidth * 3 // 2) * index
+    gapWidth = shapeWidth // 2 
+    totalWidth = shapeWidth * num_answer + gapWidth * (num_answer - 1)
+    left = ((screenWidth - totalWidth) // 2) + (shapeWidth + gapWidth) * index
+    if my_game.num_answer == 4:
+        left += 0
+    elif my_game.num_answer == 5:
+        left += 0
     top = screenHeight * 2 // 3
     ltrb = [left, top, left + shapeWidth, top + shapeWidth]
 
@@ -183,27 +192,25 @@ def screen_text(text, color, center):
 def play(my_game):
     color_map = {my_game.colorLst_code[i]: my_game.colorLst[i] for i in range(len(my_game.colorLst_code))}
     screen.blit(bg_image_resized, (0, 0))
-    screen_text(f'SCORE: {my_game.score}', (56,83,153), (100, 50))
-    screen_text(f'Choose the {color_map[my_game.answer[0]]} {my_game.answer[1]}', (56,83,153), (screenWidth//2, screenHeight//3))
-    if my_game.score < 1:
+    screen_text(f'Score: {my_game.score}', (50,50,50), (100, 50))
+    screen_text(f'Choose the {color_map[my_game.answer[0]]} {my_game.answer[1]}', (50,50,50), (screenWidth//2, screenHeight//3))
+    if my_game.num_answer == 3:
         draw_shape_color(my_game.answerLst[0][0], my_game.answerLst[0][1], 0, 3, my_game)
         draw_shape_color(my_game.answerLst[1][0], my_game.answerLst[1][1], 1, 3, my_game)
         draw_shape_color(my_game.answerLst[2][0], my_game.answerLst[2][1], 2, 3, my_game)
         draw_selection((56,83,153), my_game.selection, num_answer=3, my_game=my_game)
-
-    elif my_game.score > 1 and my_game.score < 2:
-        draw_shape_color(my_game.answerLst[0][0], my_game.answerLst[0][1], 0, 3, my_game)
-        draw_shape_color(my_game.answerLst[1][0], my_game.answerLst[1][1], 1, 3, my_game)
-        draw_shape_color(my_game.answerLst[2][0], my_game.answerLst[2][1], 2, 3, my_game)
+    elif my_game.num_answer == 4:
+        draw_shape_color(my_game.answerLst[0][0], my_game.answerLst[0][1], 0, 4, my_game)
+        draw_shape_color(my_game.answerLst[1][0], my_game.answerLst[1][1], 1, 4, my_game)
+        draw_shape_color(my_game.answerLst[2][0], my_game.answerLst[2][1], 2, 4, my_game)
         draw_shape_color(my_game.answerLst[3][0], my_game.answerLst[3][1], 3, 4, my_game)
         draw_selection((56,83,153), my_game.selection, num_answer=4, my_game=my_game)
-    else:
-        draw_shape_color(my_game.answerLst[0][0], my_game.answerLst[0][1], 0, 3, my_game)
-        draw_shape_color(my_game.answerLst[1][0], my_game.answerLst[1][1], 1, 3, my_game)
-        draw_shape_color(my_game.answerLst[2][0], my_game.answerLst[2][1], 2, 3, my_game)
+    elif my_game.num_answer == 5:
+        draw_shape_color(my_game.answerLst[0][0], my_game.answerLst[0][1], 0, 5, my_game)
+        draw_shape_color(my_game.answerLst[1][0], my_game.answerLst[1][1], 1, 5, my_game)
+        draw_shape_color(my_game.answerLst[2][0], my_game.answerLst[2][1], 2, 5, my_game)
         draw_shape_color(my_game.answerLst[3][0], my_game.answerLst[3][1], 3, 5, my_game)
-        draw_shape_color(my_game.answerLst[3][0], my_game.answerLst[3][1], 4, 5, my_game)
-
+        draw_shape_color(my_game.answerLst[4][0], my_game.answerLst[4][1], 4, 5, my_game)
         draw_selection((56,83,153), my_game.selection, num_answer=5, my_game=my_game)
 
 def over(my_game):
@@ -212,7 +219,7 @@ def over(my_game):
     textRect1 = text1.get_rect()
     textRect1.center = (screenWidth//2, screenHeight//3)
     screen.blit(text1, textRect1)
-    my_game.update(0)
+    my_game.update(3)
 
 def game1():
     global state
@@ -234,8 +241,7 @@ def game1():
                     if event.key == pygame.K_RETURN:
                         if my_game_1.selection == my_game_1.answerLst.index(my_game_1.answer):
                             my_game_1.score +=1
-                            my_game_1.random_answers()
-                            if(my_game_1.score >= 1):
+                            if(my_game_1.score >= 1 and my_game_1.score < 2):
                                 my_game_1.update(4)
                             elif (my_game_1.score >= 2):
                                 my_game_1.update(5)
