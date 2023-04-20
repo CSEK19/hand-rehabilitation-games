@@ -101,7 +101,7 @@ def play2():
     else:
         screen.blit(MyGame.milkImg, MyGame.milkImg.get_rect(center = (MyGame.egg.x_center, MyGame.egg.y_center)))
     screen.blit(MyGame.batsketImg, MyGame.batsketImg.get_rect(center = (MyGame.basket.x_center, MyGame.basket.y_center)))
-    screen_text(f'SCORE: {MyGame.score}', (56,83,153), (100, 50))
+    screen_text(f'Score: {MyGame.score}', (56,83,153), (150, 50))
 
     # key_pressed_is = pygame.key.get_pressed()
     # MyGame.move_basket(MyGame, key_pressed_is)

@@ -211,9 +211,9 @@ def main():
         if int(points) % 5 == 0 and int(points) != 0:
             game_speed += 0.02
         current_time = datetime.datetime.now().hour
-        text = font.render("SCORE: " + str(int(points)), True, FONT_COLOR)
+        text = font.render("Score: " + str(int(points)), True, FONT_COLOR)
         textRect = text.get_rect()
-        textRect.center = (100, 50)
+        textRect.center = (150, 50)
         SCREEN.blit(text, textRect)
 
     def background():
