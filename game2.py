@@ -28,7 +28,7 @@ objects_med = [0, 1]
 
 # hard
 moving_range_hard = [240, 440, 640, 840, 1040]
-speed_hard = 3
+speed_hard = 2
 
 
 class MyGame:
@@ -62,7 +62,7 @@ class MyGame:
             self.rotate_stack = 36
             self.state = state
             MyGame.current_angle = 0 if (MyGame.current_angle // 180) % 2 == 0 else 180
-            MyGame.r = 5
+            MyGame.r = 10
             # MyGame.batsketImg = pygame.transform.rotate(MyGame.batsketImg, 180)
 
         def rotate_animation(self):
@@ -96,7 +96,7 @@ def screen_text(text, color, center):
 
 def play2():
     global state
-    screen.fill(((255, 255, 255)))
+    screen.blit(bg_image_resized, (0, 0))
     if MyGame.egg.is_egg:
         screen.blit(MyGame.eggImg, MyGame.eggImg.get_rect(center=(MyGame.egg.x_center, MyGame.egg.y_center)))
     else:
@@ -122,7 +122,7 @@ def play2():
 
 
 def over2():
-    screen.fill(((255, 255, 255)))
+    screen.fill((255,255,255))
     text1 = font.render(f'Your Score: {MyGame.score}', True, (56, 83, 153))
     textRect1 = text1.get_rect()
     textRect1.center = (screenWidth // 2, screenHeight // 3)
@@ -140,9 +140,9 @@ def game2():
         if state == 'over2':
             over2()
 
-        if MyGame.score >= 8:
+        if MyGame.score >= 3:
             MyGame.objects_list = objects_med
-        if MyGame.score >= 16:
+        if MyGame.score >= 6:
             MyGame.speed = speed_hard
             MyGame.moving_range = moving_range_hard
 
