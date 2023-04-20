@@ -19,8 +19,20 @@ bg_image_resized = pygame.transform.scale(bg_image, (screenWidth, screenHeight))
 
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 
+#easy
+moving_range_easy = [440, 640, 840]
+objects_easy = [1]
+speed_easy = 2
+
+#easy
+objects_med = [0,1]
+
+#hard
+moving_range_hard = [240,440, 640, 840,1040]
+speed_hard = 3
+
+
 class MyGame:
-    state = 'home'
     batsketImg = pygame.image.load('sprites/basket_milk.png')
     batsketImg = pygame.transform.scale(batsketImg,(180,400))
     bucketImg = pygame.image.load('sprites/basket_milk.png')
@@ -32,9 +44,12 @@ class MyGame:
     current_angle = 0
     r=0
     score = 0
+    speed = speed_easy
+    moving_range = moving_range_easy
+    objects_list = objects_easy
     class egg:
         is_egg=1
-        x_center, y_center=random.choice([240,440, 640, 840,1040]), 50
+        x_center, y_center=random.choice(moving_range_easy), 50
     class basket (pygame.sprite.Sprite):
         state = 'egg'
         x_center, y_center=screenWidth//2, screenHeight
@@ -93,10 +108,10 @@ def play2():
     
     
 
-    MyGame.egg.y_center += 2
+    MyGame.egg.y_center += MyGame.speed
     if MyGame.if_in_basket(MyGame):
-        MyGame.egg.x_center, MyGame.egg.y_center = random.choice([240,440, 640, 840,1040]), 50
-        MyGame.egg.is_egg = random.randint(0,1)
+        MyGame.egg.x_center, MyGame.egg.y_center = random.choice(MyGame.moving_range), 50
+        MyGame.egg.is_egg = random.choice(MyGame.objects_list)
         MyGame.score+=1
     elif MyGame.egg.y_center>=900:
         state = 'over2'
@@ -124,11 +139,21 @@ def game2():
         if state == 'over2':
             over2()    
 
+        if MyGame.score>=8:
+            MyGame.objects_list = objects_med
+        if MyGame.score>=16:
+            MyGame.speed = speed_hard
+            MyGame.moving_range = moving_range_hard
+
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     state = 'play2'
-                    MyGame.egg.x_center, MyGame.egg.y_center= random.choice([240,440, 640, 840,1040]), 50
+                    MyGame.moving_range = moving_range_easy
+                    MyGame.speed = speed_easy
+                    MyGame.objects_list = objects_easy
+                    MyGame.score = 0
+                    MyGame.egg.x_center, MyGame.egg.y_center= random.choice(MyGame.moving_range), 50
                 if event.key == pygame.K_b:
                     exit = 1
                 if state == 'play2':
@@ -137,10 +162,10 @@ def game2():
                     if event.key == pygame.K_x:
                         MyGame.basket.change_state(MyGame.basket,state='milk')
                     if event.key == pygame.K_LEFT:
-                        if MyGame.basket.x_center > 240:
+                        if MyGame.basket.x_center > min(MyGame.moving_range):
                             MyGame.basket.x_center -=200
                     if event.key == pygame.K_RIGHT:
-                        if MyGame.basket.x_center < 1040:
+                        if MyGame.basket.x_center < max(MyGame.moving_range):
                             MyGame.basket.x_center +=200
 
             if event.type == pygame.QUIT:

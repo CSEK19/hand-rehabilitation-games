@@ -58,7 +58,7 @@ class Dinosaur:
     X_POS = 80
     Y_POS = 510
     Y_POS_DUCK = 540
-    JUMP_VEL = 10
+    JUMP_VEL = 8
 
     def __init__(self):
         self.duck_img = DUCKING
@@ -208,8 +208,8 @@ def main():
     def score():
         global points, game_speed
         points += 0.1
-        if points % 100 == 0:
-            game_speed += 0
+        if int(points) % 5 == 0 and int(points) != 0:
+            game_speed += 0.02
         current_time = datetime.datetime.now().hour
         text = font.render("SCORE: " + str(int(points)), True, FONT_COLOR)
         textRect = text.get_rect()
@@ -267,13 +267,20 @@ def main():
         player.draw(SCREEN)
         player.update(userInput)
 
+        obstacles_idx_list = [0]
+        if points > 50:
+            obstacles_idx_list = [0, 1, 1]
+        if points >120:
+            obstacles_idx_list = [0, 1, 1, 2, 2]
+
+        ob = random.choice(obstacles_idx_list)
         if len(obstacles) == 0:
-            if random.randint(0, 2) == 0:
+            if ob == 0:
                 obstacles.append(SmallCactus(SMALL_CACTUS))
-            elif random.randint(0, 2) == 1:
-                obstacles.append(LargeCactus(LARGE_CACTUS))
-            elif random.randint(0, 2) == 2:
+            elif ob == 1:
                 obstacles.append(Bird(BIRD))
+            elif ob == 2:
+                obstacles.append(LargeCactus(LARGE_CACTUS))
 
         for obstacle in obstacles:
             obstacle.draw(SCREEN)
