@@ -51,10 +51,10 @@ CLOUD = pygame.image.load(os.path.join("sprites/Other", "Cloud.png"))
 
 BG = pygame.image.load(os.path.join("sprites/Other", "Track.png"))
 
-FONT_COLOR=(56,83,153)
+FONT_COLOR = (56, 83, 153)
+
 
 class Dinosaur:
-
     X_POS = 80
     Y_POS = 510
     Y_POS_DUCK = 540
@@ -237,7 +237,7 @@ def main():
         font = pygame.font.Font("freesansbold.ttf", 30)
         text = font.render("Game Paused, Press 'u' to Unpause", True, FONT_COLOR)
         textRect = text.get_rect()
-        textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT  // 3)
+        textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
         SCREEN.blit(text, textRect)
         pygame.display.update()
 
@@ -248,6 +248,7 @@ def main():
                     quit()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_u:
                     unpause()
+
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -270,7 +271,7 @@ def main():
         obstacles_idx_list = [0]
         if points > 50:
             obstacles_idx_list = [0, 1, 1]
-        if points >120:
+        if points > 120:
             obstacles_idx_list = [0, 1, 1, 2, 2]
 
         ob = random.choice(obstacles_idx_list)
@@ -291,7 +292,7 @@ def main():
                 run = False
                 state = 'home'
                 # game3(death_count)
-        
+
         background()
 
         cloud.draw(SCREEN)
@@ -339,7 +340,7 @@ def game3():
                         state = 'play3'
         if exit == 1:
             break
-    
+
     return 'home'
 
 
