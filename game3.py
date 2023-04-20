@@ -87,7 +87,7 @@ class Dinosaur:
         if self.step_index >= 10:
             self.step_index = 0
 
-        if (userInput[pygame.K_UP] or userInput[pygame.K_SPACE]) and not self.dino_jump:
+        if (userInput[pygame.K_UP] or userInput[pygame.K_SPACE]) and not self.dino_jump and self.dino_rect.y == 510:
             self.dino_duck = False
             self.dino_run = False
             self.dino_jump = True
@@ -207,10 +207,10 @@ def main():
 
     def score():
         global points, game_speed
-        points += 0.1
-        if int(points) % 5 == 0 and int(points) != 0:
+        points += 0.05
+        if int(points) % 5 == 0 and int(points) != 0 and int(points) <= 100:
+            points += 0.01
             game_speed += 0.02
-        current_time = datetime.datetime.now().hour
         text = font.render("Score: " + str(int(points)), True, FONT_COLOR)
         textRect = text.get_rect()
         textRect.center = (150, 50)
@@ -235,7 +235,7 @@ def main():
         nonlocal pause
         pause = True
         font = pygame.font.Font("freesansbold.ttf", 30)
-        text = font.render("Game Paused, Press 'u' to Unpause", True, FONT_COLOR)
+        text = font.render("Game is paused, press 'u' to unpause", True, FONT_COLOR)
         textRect = text.get_rect()
         textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
         SCREEN.blit(text, textRect)
@@ -267,20 +267,12 @@ def main():
 
         player.draw(SCREEN)
         player.update(userInput)
-
-        obstacles_idx_list = [0]
-        if points > 50:
-            obstacles_idx_list = [0, 1, 1]
-        if points > 120:
-            obstacles_idx_list = [0, 1, 1, 2, 2]
-
-        ob = random.choice(obstacles_idx_list)
         if len(obstacles) == 0:
-            if ob == 0:
+            if random.randint(0, 2) == 0:
                 obstacles.append(SmallCactus(SMALL_CACTUS))
-            elif ob == 1:
+            elif random.randint(0, 2) == 1:
                 obstacles.append(Bird(BIRD))
-            elif ob == 2:
+            elif random.randint(0, 2) == 2:
                 obstacles.append(LargeCactus(LARGE_CACTUS))
 
         for obstacle in obstacles:
@@ -318,9 +310,9 @@ def game3():
             font = pygame.font.Font("freesansbold.ttf", 30)
 
             if death_count == 0:
-                text = font.render("Press any Key to Start", True, FONT_COLOR)
+                text = font.render("Press any key to start", True, FONT_COLOR)
             elif death_count > 0:
-                text = font.render("Press any Key to Restart", True, FONT_COLOR)
+                text = font.render("Press any key to restart", True, FONT_COLOR)
                 score = font.render("Your Score: " + str(round(points)), True, FONT_COLOR)
                 scoreRect = score.get_rect()
                 scoreRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50)
