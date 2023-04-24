@@ -1,28 +1,17 @@
 import multiprocessing
 from multiprocessing import Process, Value, Array
 import time
-import random
-from game import game
+from home_screen import game
 
 
-def HGRHandler(gesture):
+def HGRHandler():
     while True:
         time.sleep(1)
-        gesture.value = random.randint(0,2)
-        print(gesture.value)
+        print(123)
 
-def a(gesture):
-    while True:
-        print(gesture.value)
-
-if __name__ == "__main__":
-    gesture = Value('d', 0)
-    
-    p1 = multiprocessing.Process(target=HGRHandler, args= (gesture,))
-    p2 = multiprocessing.Process(target=game, args=(gesture,))
+if __name__ == "__main__":    
+    p1 = multiprocessing.Process(target=HGRHandler)
 
     p1.start()
-    p2.start()
-
+    game()
     p1.join()
-    p2.join()
