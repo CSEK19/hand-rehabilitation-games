@@ -17,7 +17,7 @@ moving_range_easy = [440, 640, 840]
 objects_easy = [1]
 speed_easy = 2
 
-# easy
+# medium
 objects_med = [0, 1]
 
 # hard
@@ -37,7 +37,7 @@ class MyGame:
     current_angle = 0
     r = 0
     score = 0
-    speed = 8
+    speed = speed_easy
     moving_range = moving_range_easy
     objects_list = objects_easy
 
