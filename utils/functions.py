@@ -1,14 +1,30 @@
 import pygame
-from utils.constant import *
+from utils.constants import *
 
-def continue_or_return(selection):
-    global screen
+def paused(screen):
+    pause = True
+    selection = 0
+    option_list(selection, screen)
+
+    while pause:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    selection = (selection + 1) % 2
+                    option_list(selection, screen)
+                elif event.key == pygame.K_UP:
+                    selection = (selection - 1) % 2
+                    option_list(selection, screen)
+                elif event.key == pygame.K_RETURN:
+                    return selection
+
+def replay_or_return(selection, screen):
     popup_width, popup_height = 600, 160
     popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
     popup_surface.fill((211, 211, 211, 0))  # set alpha to 0
     font_popup_text = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 30)
 
-    options = ['Continue', 'Home']
+    options = ['Replay', 'Home']
     texts = [font_popup_text.render(text, True, DEFAULT_COLOR) if i != selection else font_popup_text.render(text, True,
                                                                                                              FONT_COLOR)
              for (i, text) in enumerate(options)]
@@ -26,9 +42,7 @@ def continue_or_return(selection):
     screen.blit(popup_surface, popup_rect)
     pygame.display.update()
 
-
-def option_list(selection):
-    global screen
+def option_list(selection, screen):
     popup_width, popup_height = 600, 160
     popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
     popup_surface.fill((211, 211, 211, 255))  # set alpha to 0

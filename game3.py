@@ -3,7 +3,7 @@
 import os
 import random
 import pygame
-from utils.constant import *
+from utils.constants import *
 
 death_count = 0
 state_game_3 = 'play3'
@@ -351,7 +351,7 @@ def main():
                 elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     key = event.key
 
-        screen.fill((255, 255, 255))
+        screen.fill(WHITE_COLOR)
 
         # userInput = pygame.key.get_pressed()
 
@@ -374,7 +374,6 @@ def main():
                 death_count += 1
                 run = False
                 state_game_3 = 'home'
-                # game3(death_count)
 
         background()
         cloud.draw(screen)
@@ -416,7 +415,6 @@ def replay_or_return(selection):
 
 def game3(home_screen, home_font, home_clock):
     global points, death_count, state_game_3, screen, font, clock
-    global FONT_COLOR
     screen = home_screen
     font = home_font
     clock = home_clock
@@ -431,7 +429,7 @@ def game3(home_screen, home_font, home_clock):
             exit = 1
             state_game_3 = 'play3'
         else:
-            screen.fill((255, 255, 255))
+            screen.fill(WHITE_COLOR)
             score = font.render("Your Score: " + str(round(points)), True, FONT_COLOR)
             scoreRect = score.get_rect()
             scoreRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50)

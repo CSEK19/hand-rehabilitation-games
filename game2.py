@@ -1,7 +1,8 @@
 import pygame
 import os
 import random
-from utils.constant import *
+from utils.constants import *
+from utils.functions import replay_or_return, paused
 
 state_game_2 = 'play2'
 
@@ -114,57 +115,6 @@ def play2():
     MyGame.basket.rotate_animation(MyGame.basket)
 
 
-def option_list(selection):
-    global screen
-    popup_width, popup_height = 600, 160
-    popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
-    popup_surface.fill((211, 211, 211, 255))  # set alpha to 0
-    font_popup = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 40)
-    font_popup_text = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 30)
-
-    text_surface = font_popup.render("Game Paused", True, (255, 99, 71))
-    text_rect = text_surface.get_rect()
-    text_rect.centerx = popup_surface.get_rect().centerx
-    text_rect.top = 20
-    popup_surface.blit(text_surface, text_rect)
-
-    options = ['Continue', 'Home']
-    texts = [font_popup_text.render(text, True, DEFAULT_COLOR) if i != selection else font_popup_text.render(text, True,
-                                                                                                             FONT_COLOR)
-             for (i, text) in enumerate(options)]
-    textRects = [text.get_rect() for text in texts]
-
-    textRects[0].centerx = popup_surface.get_rect().centerx
-    textRects[0].top = 80
-    textRects[1].centerx = popup_surface.get_rect().centerx
-    textRects[1].top = 120
-    [popup_surface.blit(text, textRect) for text, textRect in zip(texts, textRects)]
-
-    popup_rect = popup_surface.get_rect()
-    popup_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
-
-    screen.blit(popup_surface, popup_rect)
-    pygame.display.update()
-
-
-def paused():
-    pause = True
-    selection = 0
-    option_list(selection)
-
-    while pause:
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:
-                    selection = (selection + 1) % 2
-                    option_list(selection)
-                elif event.key == pygame.K_UP:
-                    selection = (selection - 1) % 2
-                    option_list(selection)
-                elif event.key == pygame.K_RETURN:
-                    return selection
-
-
 def need_help():
     global screen
     pause = True
@@ -222,7 +172,7 @@ def need_help():
 
 
 def over2():
-    screen.fill((255, 255, 255))
+    screen.fill(WHITE_COLOR)
     text1 = font.render(f'Your Score: {MyGame.score}', True, (56, 83, 153))
     textRect1 = text1.get_rect()
     textRect1.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3 + 50)
@@ -231,31 +181,6 @@ def over2():
     textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
     screen.blit(text, textRect)
     screen.blit(text1, textRect1)
-
-def replay_or_return(selection):
-    global screen
-    popup_width, popup_height = 600, 160
-    popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
-    popup_surface.fill((211, 211, 211, 0))  # set alpha to 0
-    font_popup_text = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 30)
-
-    options = ['Replay', 'Home']
-    texts = [font_popup_text.render(text, True, DEFAULT_COLOR) if i != selection else font_popup_text.render(text, True,
-                                                                                                             FONT_COLOR)
-             for (i, text) in enumerate(options)]
-    textRects = [text.get_rect() for text in texts]
-
-    textRects[0].centerx = popup_surface.get_rect().centerx
-    textRects[0].top = 0
-    textRects[1].centerx = popup_surface.get_rect().centerx
-    textRects[1].top = 40
-    [popup_surface.blit(text, textRect) for text, textRect in zip(texts, textRects)]
-
-    popup_rect = popup_surface.get_rect()
-    popup_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50)
-
-    screen.blit(popup_surface, popup_rect)
-    pygame.display.update()
 
 
 def game2(home_screen, home_font, home_clock):
@@ -272,17 +197,17 @@ def game2(home_screen, home_font, home_clock):
             play2()
         if state_game_2 == 'over2':
             over2()
-            replay_or_return(selection)
+            replay_or_return(selection, screen)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit = 1
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_DOWN:
                         selection = (selection + 1) % 2
-                        replay_or_return(selection)
+                        replay_or_return(selection, screen)
                     elif event.key == pygame.K_UP:
                         selection = (selection - 1) % 2
-                        replay_or_return(selection)
+                        replay_or_return(selection, screen)
                     elif event.key == pygame.K_RETURN:
                         if selection == 0:
                             state_game_2 = 'play2'
@@ -319,7 +244,7 @@ def game2(home_screen, home_font, home_clock):
                         if MyGame.basket.x_center < max(MyGame.moving_range):
                             MyGame.basket.x_center += 200
                     elif event.key == pygame.K_p:
-                        if paused() == 0:
+                        if paused(screen) == 0:
                             continue
                         else:
                             exit = 1
