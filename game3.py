@@ -1,16 +1,21 @@
 # !/usr/bin/python
 # -*- coding: utf-8 -*-
+import datetime
 import os
 import random
+
 import pygame
-from utils.constant import *
 
+pygame.init()
 death_count = 0
-state_game_3 = 'play3'
+state = 'play3'
+# Global Constants
 
-screen = None
-font = None
-clock = None
+SCREEN_HEIGHT = 720
+SCREEN_WIDTH = 1280
+SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+pygame.display.set_caption("Chrome Dino Runner")
 
 Ico = pygame.image.load("sprites/DinoWallpaper.png")
 pygame.display.set_icon(Ico)
@@ -45,6 +50,8 @@ CLOUD = pygame.image.load(os.path.join("sprites/Other", "Cloud.png"))
 
 BG = pygame.image.load(os.path.join("sprites/Other", "Track.png"))
 
+FONT_COLOR = (56, 83, 153)
+
 
 class Dinosaur:
     X_POS = 80
@@ -68,10 +75,7 @@ class Dinosaur:
         self.dino_rect.x = self.X_POS
         self.dino_rect.y = self.Y_POS
 
-        self.duck_interval = 25
-        self.duck_count = 0
-
-    def update(self, key):
+    def update(self, userInput):
         if self.dino_duck:
             self.duck()
         if self.dino_run:
@@ -82,18 +86,15 @@ class Dinosaur:
         if self.step_index >= 10:
             self.step_index = 0
 
-        if (key == pygame.K_UP) and not self.dino_jump and self.dino_rect.y == 510:
+        if (userInput[pygame.K_UP] or userInput[pygame.K_SPACE]) and not self.dino_jump and self.dino_rect.y == 510:
             self.dino_duck = False
             self.dino_run = False
             self.dino_jump = True
-        elif (key == pygame.K_DOWN and not self.dino_jump) or self.duck_count > 0:
-            self.duck_count += 1
-            if self.duck_count == self.duck_interval:
-                self.duck_count = 0
+        elif userInput[pygame.K_DOWN] and not self.dino_jump:
             self.dino_duck = True
             self.dino_run = False
             self.dino_jump = False
-        elif not key and not self.dino_jump:
+        elif not (self.dino_jump or userInput[pygame.K_DOWN]):
             self.dino_duck = False
             self.dino_run = True
             self.dino_jump = False
@@ -121,8 +122,8 @@ class Dinosaur:
             self.dino_jump = False
             self.jump_vel = self.JUMP_VEL
 
-    def draw(self, my_screen):
-        my_screen.blit(self.image, (self.dino_rect.x, self.dino_rect.y))
+    def draw(self, SCREEN):
+        SCREEN.blit(self.image, (self.dino_rect.x, self.dino_rect.y))
 
 
 class Cloud:
@@ -138,8 +139,8 @@ class Cloud:
             self.x = SCREEN_WIDTH + random.randint(2500, 3000)
             self.y = random.randint(50, 100)
 
-    def draw(self, my_screen):
-        my_screen.blit(self.image, (self.x, self.y))
+    def draw(self, SCREEN):
+        SCREEN.blit(self.image, (self.x, self.y))
 
 
 class Obstacle:
@@ -189,20 +190,22 @@ class Bird(Obstacle):
 
 
 def main():
-    global game_speed, x_pos_bg, y_pos_bg, points, obstacles, death_count, state_game_3, font
+    global game_speed, x_pos_bg, y_pos_bg, points, obstacles, death_count, state
     run = True
+    clock = pygame.time.Clock()
     player = Dinosaur()
     cloud = Cloud()
     game_speed = 10
     x_pos_bg = 0
     y_pos_bg = 580
     points = 0
+    font = pygame.font.SysFont('', 50)
     obstacles = []
     death_count = 0
     pause = False
 
     def score():
-        global points, game_speed, font
+        global points, game_speed
         points += 0.05
         if int(points) % 5 == 0 and int(points) != 0 and int(points) <= 100:
             points += 0.01
@@ -210,154 +213,59 @@ def main():
         text = font.render("Score: " + str(int(points)), True, FONT_COLOR)
         textRect = text.get_rect()
         textRect.center = (150, 50)
-        screen.blit(text, textRect)
+        SCREEN.blit(text, textRect)
 
     def background():
         global x_pos_bg, y_pos_bg
         image_width = BG.get_width()
-        screen.blit(BG, (x_pos_bg, y_pos_bg))
-        screen.blit(BG, (image_width + x_pos_bg, y_pos_bg))
+        SCREEN.blit(BG, (x_pos_bg, y_pos_bg))
+        SCREEN.blit(BG, (image_width + x_pos_bg, y_pos_bg))
         if x_pos_bg <= -image_width:
-            screen.blit(BG, (image_width + x_pos_bg, y_pos_bg))
+            SCREEN.blit(BG, (image_width + x_pos_bg, y_pos_bg))
             x_pos_bg = 0
         x_pos_bg -= game_speed
 
-    def need_help():
-        global screen
-        nonlocal pause
-        pause = True
-
-        popup_width, popup_height = 1000, 300
-        popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
-        popup_surface.fill((211, 211, 211, 0))  # set alpha to 0
-        font_popup = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 40)
-        font_popup_text = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 30)
-
-        text_surface = font_popup.render("How to Play", True, (255, 99, 71))
-        text_rect = text_surface.get_rect()
-        text_rect.centerx = popup_surface.get_rect().centerx
-        text_rect.top = 20
-        popup_surface.blit(text_surface, text_rect)
-
-        desc_text = "Control the dinosaur to avoid obstacles as much as possible"
-        desc_surface = font_popup_text.render(desc_text, True, FONT_COLOR)
-        desc_rect = desc_surface.get_rect()
-        desc_rect.centerx = popup_surface.get_rect().centerx
-        desc_rect.top = 75
-        popup_surface.blit(desc_surface, desc_rect)
-
-        option0_text = "To jump - move palm up"
-        option0_surface = font_popup_text.render(option0_text, True, DEFAULT_COLOR)
-        option0_rect = option0_surface.get_rect()
-        option0_rect.centerx = popup_surface.get_rect().centerx
-        option0_rect.top = 125
-        popup_surface.blit(option0_surface, option0_rect)
-
-        option1_text = "To duck - move palm down"
-        option1_surface = font_popup_text.render(option1_text, True, DEFAULT_COLOR)
-        option1_rect = option1_surface.get_rect()
-        option1_rect.centerx = popup_surface.get_rect().centerx
-        option1_rect.top = 175
-        popup_surface.blit(option1_surface, option1_rect)
-
-        option2_text = "Make a fist to continue"
-        option2_surface = font_popup_text.render(option2_text, True, FONT_COLOR)
-        option2_rect = option2_surface.get_rect()
-        option2_rect.centerx = popup_surface.get_rect().centerx
-        option2_rect.top = 225
-        popup_surface.blit(option2_surface, option2_rect)
-
-        popup_rect = popup_surface.get_rect()
-        popup_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
-
-        screen.blit(popup_surface, popup_rect)
-        pygame.display.update()
-
-        while pause:
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                    return
-
-    def option_list(selection):
-        global screen
-        popup_width, popup_height = 600, 160
-        popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
-        popup_surface.fill((211, 211, 211, 0))  # set alpha to 0
-        font_popup = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 40)
-        font_popup_text = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 30)
-
-        text_surface = font_popup.render("Game Paused", True, (255, 99, 71))
-        text_rect = text_surface.get_rect()
-        text_rect.centerx = popup_surface.get_rect().centerx
-        text_rect.top = 20
-        popup_surface.blit(text_surface, text_rect)
-
-        options = ['Continue', 'Home']
-        texts = [
-            font_popup_text.render(text, True, DEFAULT_COLOR) if i != selection else font_popup_text.render(text, True,
-                                                                                                            FONT_COLOR)
-            for (i, text) in enumerate(options)]
-        textRects = [text.get_rect() for text in texts]
-
-        textRects[0].centerx = popup_surface.get_rect().centerx
-        textRects[0].top = 80
-        textRects[1].centerx = popup_surface.get_rect().centerx
-        textRects[1].top = 120
-        [popup_surface.blit(text, textRect) for text, textRect in zip(texts, textRects)]
-
-        popup_rect = popup_surface.get_rect()
-        popup_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
-
-        screen.blit(popup_surface, popup_rect)
-        pygame.display.update()
+    def unpause():
+        nonlocal pause, run
+        pause = False
+        run = True
 
     def paused():
         nonlocal pause
         pause = True
-        selection = 0
-        option_list(selection)
+        font = pygame.font.Font("freesansbold.ttf", 30)
+        text = font.render("Game is paused, press 'u' to unpause", True, FONT_COLOR)
+        textRect = text.get_rect()
+        textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
+        SCREEN.blit(text, textRect)
+        pygame.display.update()
 
         while pause:
             for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_DOWN:
-                        selection = (selection + 1) % 2
-                        option_list(selection)
-                    elif event.key == pygame.K_UP:
-                        selection = (selection - 1) % 2
-                        option_list(selection)
-                    elif event.key == pygame.K_RETURN:
-                        return selection
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_u:
+                    unpause()
 
-    is_first_time = True
     while run:
-        key = None
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-                state_game_3 = 'home'
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
-                    if paused() == 1:
-                        run = False
-                        state_game_3 = 'exit'
-                    else:
-                        run = True
-                elif event.key == pygame.K_b:
-                    run = False
-                    state_game_3 = 'exit'
-                elif event.key == pygame.K_h:
-                    need_help()
-                elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                    key = event.key
+                state = 'home'
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+                run = False
+                paused()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_b:
+                run = False
+                state = 'home'
 
-        screen.fill((255, 255, 255))
+        SCREEN.fill((255, 255, 255))
 
-        # userInput = pygame.key.get_pressed()
+        userInput = pygame.key.get_pressed()
 
-        player.draw(screen)
-        player.update(key)
-
+        player.draw(SCREEN)
+        player.update(userInput)
         if len(obstacles) == 0:
             if random.randint(0, 2) == 0:
                 obstacles.append(SmallCactus(SMALL_CACTUS))
@@ -367,99 +275,61 @@ def main():
                 obstacles.append(LargeCactus(LARGE_CACTUS))
 
         for obstacle in obstacles:
-            obstacle.draw(screen)
+            obstacle.draw(SCREEN)
             obstacle.update()
-            if player.dino_rect.collidepoint(obstacle.rect.center):
+            if player.dino_rect.colliderect(obstacle.rect):
                 pygame.time.delay(1000)
                 death_count += 1
                 run = False
-                state_game_3 = 'home'
+                state = 'home'
                 # game3(death_count)
 
         background()
-        cloud.draw(screen)
-        cloud.update()
-        score()
-        clock.tick(30)
-        if is_first_time:
-            need_help()
-            is_first_time = False
 
+        cloud.draw(SCREEN)
+        cloud.update()
+
+        score()
+
+        clock.tick(30)
         pygame.display.update()
 
 
-def replay_or_return(selection):
-    global screen
-    popup_width, popup_height = 600, 160
-    popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
-    popup_surface.fill((211, 211, 211, 0))  # set alpha to 0
-    font_popup_text = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 30)
-
-    options = ['Replay', 'Home']
-    texts = [font_popup_text.render(text, True, DEFAULT_COLOR) if i != selection else font_popup_text.render(text, True,
-                                                                                                             FONT_COLOR)
-             for (i, text) in enumerate(options)]
-    textRects = [text.get_rect() for text in texts]
-
-    textRects[0].centerx = popup_surface.get_rect().centerx
-    textRects[0].top = 0
-    textRects[1].centerx = popup_surface.get_rect().centerx
-    textRects[1].top = 40
-    [popup_surface.blit(text, textRect) for text, textRect in zip(texts, textRects)]
-
-    popup_rect = popup_surface.get_rect()
-    popup_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3 + 300)
-
-    screen.blit(popup_surface, popup_rect)
-    pygame.display.update()
-
-
-def game3(home_screen, home_font, home_clock):
-    global points, death_count, state_game_3, screen, font, clock
+def game3():
+    global points, death_count, state
     global FONT_COLOR
-    screen = home_screen
-    font = home_font
-    clock = home_clock
     run = True
     exit = 0
-    selection = 0
-
     while run:
-        if state_game_3 == 'play3':
+        if state == 'play3':
             main()
-        elif state_game_3 == 'exit':
-            exit = 1
-            state_game_3 = 'play3'
         else:
-            screen.fill((255, 255, 255))
-            score = font.render("Your Score: " + str(round(points)), True, FONT_COLOR)
-            scoreRect = score.get_rect()
-            scoreRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50)
-            screen.blit(score, scoreRect)
-            text = font.render("Game Over", True, (255, 99, 71))
+            current_time = datetime.datetime.now().hour
+            SCREEN.fill((255, 255, 255))
+            font = pygame.font.Font("freesansbold.ttf", 30)
+
+            if death_count == 0:
+                text = font.render("Press any key to start", True, FONT_COLOR)
+            elif death_count > 0:
+                text = font.render("Press any key to restart", True, FONT_COLOR)
+                score = font.render("Your Score: " + str(round(points)), True, FONT_COLOR)
+                scoreRect = score.get_rect()
+                scoreRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50)
+                SCREEN.blit(score, scoreRect)
             textRect = text.get_rect()
             textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-            screen.blit(text, textRect)
-            screen.blit(RUNNING[0], (SCREEN_WIDTH // 2 - 20, SCREEN_HEIGHT // 2 - 140))
-            replay_or_return(selection)
-
+            SCREEN.blit(text, textRect)
+            SCREEN.blit(RUNNING[0], (SCREEN_WIDTH // 2 - 20, SCREEN_HEIGHT // 2 - 140))
+            pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit = 1
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_DOWN:
-                        selection = (selection + 1) % 2
-                        replay_or_return(selection)
-                    elif event.key == pygame.K_UP:
-                        selection = (selection - 1) % 2
-                        replay_or_return(selection)
-                    elif event.key == pygame.K_RETURN:
-                        if selection == 0:
-                            state_game_3 = 'play3'
-                        else:
-                            exit = 1
+                    if event.key == pygame.K_b:
+                        exit = 1
+                    else:
+                        state = 'play3'
         if exit == 1:
-            state_game_3 = 'play3'
             break
 
     return 'home'

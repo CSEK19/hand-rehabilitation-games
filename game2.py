@@ -1,15 +1,22 @@
-import pygame
-import os
+import pygame, os
 import random
-from utils.constant import *
 
-state_game_2 = 'play2'
+pygame.init()
+pygame.font.init()
+pygame.font.get_init()
+clock = pygame.time.Clock()
 
-screen = None
-font = None
-clock = None
+screenWidth = 1280
+screenHeight = 720
+font = pygame.font.SysFont('', 50)
+
+state = 'play2'
+
+screen = pygame.display.set_mode((screenWidth, screenHeight))
 bg_image = pygame.image.load(os.path.join("sprites", "bg.png"))
-bg_image_resized = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+bg_image_resized = pygame.transform.scale(bg_image, (screenWidth, screenHeight))
+
+screen = pygame.display.set_mode((screenWidth, screenHeight))
 
 # easy
 moving_range_easy = [440, 640, 840]
@@ -36,7 +43,7 @@ class MyGame:
     current_angle = 0
     r = 0
     score = 0
-    speed = 8
+    speed = speed_easy
     moving_range = moving_range_easy
     objects_list = objects_easy
 
@@ -46,7 +53,7 @@ class MyGame:
 
     class basket(pygame.sprite.Sprite):
         state = 'egg'
-        x_center, y_center = SCREEN_WIDTH // 2, SCREEN_HEIGHT
+        x_center, y_center = screenWidth // 2, screenHeight
         rotate_stack = 0
 
         def change_state(self, state):
@@ -66,7 +73,7 @@ class MyGame:
 
     def if_in_basket(self):
         cond1 = self.egg.y_center >= self.basket.y_center - 200
-        cond2 = self.basket.x_center - 100 <= self.egg.x_center <= self.basket.x_center + 100
+        cond2 = self.basket.x_center - 100 <= self.egg.x_center and self.egg.x_center <= self.basket.x_center + 100
         cond3 = self.egg.is_egg == (self.basket.state == 'egg')
         return cond1 and cond2 and cond3
 
@@ -88,7 +95,7 @@ def screen_text(text, color, center):
 
 
 def play2():
-    global state_game_2
+    global state
     screen.blit(bg_image_resized, (0, 0))
     if MyGame.egg.is_egg:
         screen.blit(MyGame.eggImg, MyGame.eggImg.get_rect(center=(MyGame.egg.x_center, MyGame.egg.y_center)))
@@ -106,7 +113,7 @@ def play2():
         MyGame.egg.is_egg = random.choice(MyGame.objects_list)
         MyGame.score += 1
     elif MyGame.egg.y_center >= 900:
-        state_game_2 = 'over2'
+        state = 'over2'
 
     MyGame.current_angle += MyGame.r
     if MyGame.current_angle % 180 == 0:
@@ -114,231 +121,62 @@ def play2():
     MyGame.basket.rotate_animation(MyGame.basket)
 
 
-def option_list(selection):
-    global screen
-    popup_width, popup_height = 600, 160
-    popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
-    popup_surface.fill((211, 211, 211, 255))  # set alpha to 0
-    font_popup = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 40)
-    font_popup_text = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 30)
-
-    text_surface = font_popup.render("Game Paused", True, (255, 99, 71))
-    text_rect = text_surface.get_rect()
-    text_rect.centerx = popup_surface.get_rect().centerx
-    text_rect.top = 20
-    popup_surface.blit(text_surface, text_rect)
-
-    options = ['Continue', 'Home']
-    texts = [font_popup_text.render(text, True, DEFAULT_COLOR) if i != selection else font_popup_text.render(text, True,
-                                                                                                             FONT_COLOR)
-             for (i, text) in enumerate(options)]
-    textRects = [text.get_rect() for text in texts]
-
-    textRects[0].centerx = popup_surface.get_rect().centerx
-    textRects[0].top = 80
-    textRects[1].centerx = popup_surface.get_rect().centerx
-    textRects[1].top = 120
-    [popup_surface.blit(text, textRect) for text, textRect in zip(texts, textRects)]
-
-    popup_rect = popup_surface.get_rect()
-    popup_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
-
-    screen.blit(popup_surface, popup_rect)
-    pygame.display.update()
-
-
-def paused():
-    pause = True
-    selection = 0
-    option_list(selection)
-
-    while pause:
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:
-                    selection = (selection + 1) % 2
-                    option_list(selection)
-                elif event.key == pygame.K_UP:
-                    selection = (selection - 1) % 2
-                    option_list(selection)
-                elif event.key == pygame.K_RETURN:
-                    return selection
-
-
-def need_help():
-    global screen
-    pause = True
-
-    popup_width, popup_height = 1000, 300
-    popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
-    popup_surface.fill((211, 211, 211, 255))  # set alpha to 0
-    font_popup = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 40)
-    font_popup_text = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 30)
-
-    text_surface = font_popup.render("How to Play", True, (255, 99, 71))
-    text_rect = text_surface.get_rect()
-    text_rect.centerx = popup_surface.get_rect().centerx
-    text_rect.top = 20
-    popup_surface.blit(text_surface, text_rect)
-
-    desc_text = "Collect eggs with basket, collect milk with large bottle"
-    desc_surface = font_popup_text.render(desc_text, True, FONT_COLOR)
-    desc_rect = desc_surface.get_rect()
-    desc_rect.centerx = popup_surface.get_rect().centerx
-    desc_rect.top = 75
-    popup_surface.blit(desc_surface, desc_rect)
-
-    option0_text = "To move container - move palm left or right"
-    option0_surface = font_popup_text.render(option0_text, True, DEFAULT_COLOR)
-    option0_rect = option0_surface.get_rect()
-    option0_rect.centerx = popup_surface.get_rect().centerx
-    option0_rect.top = 125
-    popup_surface.blit(option0_surface, option0_rect)
-
-    option1_text = "To convert between bottle and basket - rotate palm"
-    option1_surface = font_popup_text.render(option1_text, True, DEFAULT_COLOR)
-    option1_rect = option1_surface.get_rect()
-    option1_rect.centerx = popup_surface.get_rect().centerx
-    option1_rect.top = 175
-    popup_surface.blit(option1_surface, option1_rect)
-
-    option2_text = "Make a fist to close this window"
-    option2_surface = font_popup_text.render(option2_text, True, FONT_COLOR)
-    option2_rect = option2_surface.get_rect()
-    option2_rect.centerx = popup_surface.get_rect().centerx
-    option2_rect.top = 225
-    popup_surface.blit(option2_surface, option2_rect)
-
-    popup_rect = popup_surface.get_rect()
-    popup_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
-
-    screen.blit(popup_surface, popup_rect)
-    pygame.display.update()
-
-    while pause:
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                return
-
-
 def over2():
-    screen.fill((255, 255, 255))
+    screen.fill((255,255,255))
     text1 = font.render(f'Your Score: {MyGame.score}', True, (56, 83, 153))
     textRect1 = text1.get_rect()
-    textRect1.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3 + 50)
-    text = font.render("Game Over", True, (255, 99, 71))
-    textRect = text.get_rect()
-    textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
-    screen.blit(text, textRect)
+    textRect1.center = (screenWidth // 2, screenHeight // 3)
     screen.blit(text1, textRect1)
 
-def replay_or_return(selection):
-    global screen
-    popup_width, popup_height = 600, 160
-    popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
-    popup_surface.fill((211, 211, 211, 0))  # set alpha to 0
-    font_popup_text = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 30)
 
-    options = ['Replay', 'Home']
-    texts = [font_popup_text.render(text, True, DEFAULT_COLOR) if i != selection else font_popup_text.render(text, True,
-                                                                                                             FONT_COLOR)
-             for (i, text) in enumerate(options)]
-    textRects = [text.get_rect() for text in texts]
-
-    textRects[0].centerx = popup_surface.get_rect().centerx
-    textRects[0].top = 0
-    textRects[1].centerx = popup_surface.get_rect().centerx
-    textRects[1].top = 40
-    [popup_surface.blit(text, textRect) for text, textRect in zip(texts, textRects)]
-
-    popup_rect = popup_surface.get_rect()
-    popup_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50)
-
-    screen.blit(popup_surface, popup_rect)
-    pygame.display.update()
-
-
-def game2(home_screen, home_font, home_clock):
-    global state_game_2, screen, font, clock
-    screen = home_screen
-    font = home_font
-    clock = home_clock
+def game2():
+    global state
     exit = 0
-    is_first_time = True
-    selection = 0
 
     while True:
-        if state_game_2 == 'play2':
+
+        if state == 'play2':
             play2()
-        if state_game_2 == 'over2':
+        if state == 'over2':
             over2()
-            replay_or_return(selection)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    exit = 1
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_DOWN:
-                        selection = (selection + 1) % 2
-                        replay_or_return(selection)
-                    elif event.key == pygame.K_UP:
-                        selection = (selection - 1) % 2
-                        replay_or_return(selection)
-                    elif event.key == pygame.K_RETURN:
-                        if selection == 0:
-                            state_game_2 = 'play2'
-                            MyGame.score = 0
-                            MyGame.egg.x_center, MyGame.egg.y_center = random.choice(moving_range_easy), 50
 
-                        else:
-                            exit = 1
-
-        if 8 <= MyGame.score <= 15:
+        if MyGame.score >= 3:
             MyGame.objects_list = objects_med
-        elif MyGame.score >= 16:
+        if MyGame.score >= 6:
             MyGame.speed = speed_hard
             MyGame.moving_range = moving_range_hard
 
-        if is_first_time:
-            need_help()
-            is_first_time = False
-
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    state = 'play2'
+                    MyGame.moving_range = moving_range_easy
+                    MyGame.speed = speed_easy
+                    MyGame.objects_list = objects_easy
+                    MyGame.score = 0
+                    MyGame.egg.x_center, MyGame.egg.y_center = random.choice(MyGame.moving_range), 50
                 if event.key == pygame.K_b:
                     exit = 1
-                if state_game_2 == 'play2':
+                if state == 'play2':
                     if event.key == pygame.K_z:
-                        if MyGame.basket.state == 'milk':
-                            MyGame.basket.change_state(MyGame.basket, state='egg')
-                        else:
-                            MyGame.basket.change_state(MyGame.basket, state='milk')
-                    elif event.key == pygame.K_LEFT:
+                        MyGame.basket.change_state(MyGame.basket, state='egg')
+                    if event.key == pygame.K_x:
+                        MyGame.basket.change_state(MyGame.basket, state='milk')
+                    if event.key == pygame.K_LEFT:
                         if MyGame.basket.x_center > min(MyGame.moving_range):
                             MyGame.basket.x_center -= 200
-                    elif event.key == pygame.K_RIGHT:
+                    if event.key == pygame.K_RIGHT:
                         if MyGame.basket.x_center < max(MyGame.moving_range):
                             MyGame.basket.x_center += 200
-                    elif event.key == pygame.K_p:
-                        if paused() == 0:
-                            continue
-                        else:
-                            exit = 1
-                    elif event.key == pygame.K_h:
-                        need_help()
 
             if event.type == pygame.QUIT:
                 exit = 1
                 # pygame.quit()
                 # sys.exit()
         if exit == 1:
-            state_game_2 = 'play2'
-            MyGame.score = 0
-            MyGame.egg.x_center, MyGame.egg.y_center = random.choice(moving_range_easy), 50
             break
-
         pygame.display.flip()
         clock.tick(60)
-
     return 'home'
 
 
