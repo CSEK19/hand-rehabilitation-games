@@ -23,7 +23,7 @@ objects_med = [0, 1]
 # hard
 moving_range_hard = [240, 440, 640, 840, 1040]
 speed_hard = 2
-
+enable_Vie_language = False
 
 class MyGame:
     batsketImg = pygame.image.load('sprites/basket_milk.png')
@@ -89,14 +89,17 @@ def screen_text(text, color, center):
 
 
 def play2():
-    global state_game_2
+    global state_game_2, enable_Vie_language
     screen.blit(bg_image_resized, (0, 0))
     if MyGame.egg.is_egg:
         screen.blit(MyGame.eggImg, MyGame.eggImg.get_rect(center=(MyGame.egg.x_center, MyGame.egg.y_center)))
     else:
         screen.blit(MyGame.milkImg, MyGame.milkImg.get_rect(center=(MyGame.egg.x_center, MyGame.egg.y_center)))
     screen.blit(MyGame.batsketImg, MyGame.batsketImg.get_rect(center=(MyGame.basket.x_center, MyGame.basket.y_center)))
-    screen_text(f'Score: {MyGame.score}', (56, 83, 153), (150, 50))
+    if not enable_Vie_language:
+        screen_text(f'Score: {MyGame.score}', (50, 50, 50), (150, 50))
+    else: 
+        screen_text(f'Điểm: {MyGame.score}', (50, 50, 50), (150, 50))
 
     # key_pressed_is = pygame.key.get_pressed()
     # MyGame.move_basket(MyGame, key_pressed_is)
@@ -119,40 +122,50 @@ def need_help():
     global screen
     pause = True
 
-    popup_width, popup_height = 1000, 300
+    popup_width, popup_height = 800, 300
     popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
     popup_surface.fill((211, 211, 211, 255))  # set alpha to 0
     font_popup = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 40)
     font_popup_text = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 30)
 
-    text_surface = font_popup.render("How to Play", True, (255, 99, 71))
+    if not enable_Vie_language:
+        help_text = 'How to Play'
+        desc_text = "Select the right shape following the description"
+        option0_text = "To change selection - move palm left or right"
+        option1_text = "To select - make a fist"
+        option2_text = "Make a fist to close this window"
+    else:
+        help_text = 'Cách chơi'
+        desc_text = "Thu nhặt trứng bằng giỏ, thu thập sữa bằng bình"
+        option0_text = "Để di chuyển đồ hứng - lắc bàn tay sang trái/phải"
+        option1_text = "Để chuyển đổi giữa giỏ và bình - xoay lòng bàn tay"
+        option2_text = "Nắm chặt bàn tay để đóng cửa sổ này"
+
+
+    text_surface = font_popup.render(help_text, True, (255, 99, 71))
     text_rect = text_surface.get_rect()
     text_rect.centerx = popup_surface.get_rect().centerx
     text_rect.top = 20
     popup_surface.blit(text_surface, text_rect)
 
-    desc_text = "Collect eggs with basket, collect milk with large bottle"
     desc_surface = font_popup_text.render(desc_text, True, FONT_COLOR)
     desc_rect = desc_surface.get_rect()
     desc_rect.centerx = popup_surface.get_rect().centerx
     desc_rect.top = 75
     popup_surface.blit(desc_surface, desc_rect)
 
-    option0_text = "To move container - move palm left or right"
     option0_surface = font_popup_text.render(option0_text, True, DEFAULT_COLOR)
     option0_rect = option0_surface.get_rect()
     option0_rect.centerx = popup_surface.get_rect().centerx
     option0_rect.top = 125
     popup_surface.blit(option0_surface, option0_rect)
 
-    option1_text = "To convert between bottle and basket - rotate palm"
     option1_surface = font_popup_text.render(option1_text, True, DEFAULT_COLOR)
     option1_rect = option1_surface.get_rect()
     option1_rect.centerx = popup_surface.get_rect().centerx
     option1_rect.top = 175
     popup_surface.blit(option1_surface, option1_rect)
 
-    option2_text = "Make a fist to close this window"
     option2_surface = font_popup_text.render(option2_text, True, FONT_COLOR)
     option2_rect = option2_surface.get_rect()
     option2_rect.centerx = popup_surface.get_rect().centerx
@@ -173,41 +186,46 @@ def need_help():
 
 def over2():
     screen.fill(WHITE_COLOR)
-    text1 = font.render(f'Your Score: {MyGame.score}', True, (56, 83, 153))
+    if not enable_Vie_language:
+        text = font.render("Game Over", True, (255, 99, 71))
+        text1 = font.render(f'Your Score: {MyGame.score}', True, (56, 83, 153))
+    else:
+        text = font.render("Trò chơi kết thúc", True, (255, 99, 71))
+        text1 = font.render(f'Điểm của bạn: {MyGame.score}', True, (56, 83, 153))
     textRect1 = text1.get_rect()
     textRect1.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3 + 50)
-    text = font.render("Game Over", True, (255, 99, 71))
     textRect = text.get_rect()
     textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
     screen.blit(text, textRect)
     screen.blit(text1, textRect1)
 
 
-def game2(home_screen, home_font, home_clock):
-    global state_game_2, screen, font, clock
+def game2(home_screen, home_font, home_clock, lang):
+    global state_game_2, screen, font, clock, enable_Vie_language
     screen = home_screen
     font = home_font
     clock = home_clock
     exit = 0
     is_first_time = True
     selection = 0
+    enable_Vie_language = lang
 
     while True:
         if state_game_2 == 'play2':
             play2()
         if state_game_2 == 'over2':
             over2()
-            replay_or_return(selection, screen)
+            replay_or_return(selection, screen, enable_Vie_language)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit = 1
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_DOWN:
                         selection = (selection + 1) % 2
-                        replay_or_return(selection, screen)
+                        replay_or_return(selection, screen, enable_Vie_language)
                     elif event.key == pygame.K_UP:
                         selection = (selection - 1) % 2
-                        replay_or_return(selection, screen)
+                        replay_or_return(selection, screen, enable_Vie_language)
                     elif event.key == pygame.K_RETURN:
                         if selection == 0:
                             state_game_2 = 'play2'
@@ -244,7 +262,7 @@ def game2(home_screen, home_font, home_clock):
                         if MyGame.basket.x_center < max(MyGame.moving_range):
                             MyGame.basket.x_center += 200
                     elif event.key == pygame.K_p:
-                        if paused(screen) == 0:
+                        if paused(screen, enable_Vie_language) == 0:
                             continue
                         else:
                             exit = 1

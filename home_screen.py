@@ -126,7 +126,7 @@ def game():
         if state == 'game1':
             state = game1(screen, font, clock, enable_Vie_language)
         if state == 'game2':
-            state = game2(screen, font, clock)
+            state = game2(screen, font, clock, enable_Vie_language)
         if state == 'game3':
             state = game3(screen, font, clock)
 

@@ -221,7 +221,7 @@ def need_help():
     else:
         help_text = 'Cách chơi'
         desc_text = "Chọn hình đúng theo mô tả"
-        option0_text = "Để thay đổi lựa chọn - lắc tay trái/phải"
+        option0_text = "Để thay đổi lựa chọn - lắc bàn tay trái/phải"
         option1_text = "Để chọn - nắm chặt bàn tay"
         option2_text = "Nắm chặt bàn tay để đóng cửa sổ này"
 
