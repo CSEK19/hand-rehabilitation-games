@@ -27,14 +27,11 @@ enable_music = False
 enable_Vie_language = True
 setting_selection = 0
 is_playing_music = False
-# if enable_music:
-#     pygame.mixer.music.play()
-# while pygame.mixer.music.get_busy():
-#     pygame.time.Clock().tick(10)
 
 
 def game_list(selection):
-    games = ['1. Shapes and Colors', '2. Eggs and Milk', '3. Dino Run'] if not enable_Vie_language else ['1. Hình và Màu sắc', '2. Trứng và Sữa', '3. Chạy cùng Khủng long']
+    games = ['1. Shapes and Colors', '2. Eggs and Milk', '3. Dino Run'] if not enable_Vie_language else [
+        '1. Hình và Màu sắc', '2. Trứng và Sữa', '3. Chạy cùng Khủng long']
     texts = [font.render(text, True, (64, 61, 57)) if i != selection else font.render(text, True, FONT_COLOR) for
              (i, text) in enumerate(games)]
     textRects = [text.get_rect() for text in texts]
@@ -42,6 +39,7 @@ def game_list(selection):
     textRects[1].midleft = (SCREEN_WIDTH // 3, 400)
     textRects[2].midleft = (SCREEN_WIDTH // 3, 500)
     [screen.blit(text, textRect) for text, textRect in zip(texts, textRects)]
+
 
 def setting_list(selection):
     if enable_Vie_language:
@@ -53,8 +51,10 @@ def setting_list(selection):
         language_text = 'Language: English' if not enable_Vie_language else 'Language: Vietnamese'
         save_text = 'Save'
     games = [music_text, language_text, save_text]
-    texts = [font_setting.render(text, True, (64, 61, 57)) if i != selection else font_setting.render(text, True, FONT_COLOR) for
-             (i, text) in enumerate(games)]
+    texts = [
+        font_setting.render(text, True, (64, 61, 57)) if i != selection else font_setting.render(text, True, FONT_COLOR)
+        for
+        (i, text) in enumerate(games)]
     textRects = [text.get_rect() for text in texts]
     textRects[0].midleft = (SCREEN_WIDTH // 3, 300)
     textRects[0].centerx = SCREEN_WIDTH // 2
@@ -64,6 +64,7 @@ def setting_list(selection):
     textRects[2].centerx = SCREEN_WIDTH // 2
 
     [screen.blit(text, textRect) for text, textRect in zip(texts, textRects)]
+
 
 def home():
     global selection, enable_setting, enable_music, enable_Vie_language, setting_selection
@@ -110,9 +111,6 @@ def home():
         game_list(selection)
 
 
-
-
-
 def game():
     global state, selection, enable_setting, setting_selection, enable_music, enable_Vie_language, is_playing_music
 
@@ -153,16 +151,15 @@ def game():
                 else:
                     if event.key == pygame.K_RETURN:
                         if setting_selection == 0:
-                            enable_music = not enable_music 
+                            enable_music = not enable_music
                         elif setting_selection == 1:
-                            enable_Vie_language = not enable_Vie_language 
+                            enable_Vie_language = not enable_Vie_language
                         elif setting_selection == 2:
                             enable_setting = False
                     if event.key == pygame.K_UP:
                         setting_selection = (setting_selection - 1) % 3
                     elif event.key == pygame.K_DOWN:
                         setting_selection = (setting_selection + 1) % 3
-
 
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -173,5 +170,4 @@ def game():
 
 
 if __name__ == "__main__":
-
     game()
