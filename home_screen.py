@@ -30,8 +30,7 @@ is_playing_music = False
 
 
 def game_list(selection):
-    games = ['1. Shapes and Colors', '2. Eggs and Milk', '3. Dino Run'] if not enable_Vie_language else [
-        '1. Hình và Màu sắc', '2. Trứng và Sữa', '3. Chạy cùng Khủng long']
+    games = ['1. Shapes and Colors', '2. Eggs and Milk', '3. Dino Run'] 
     texts = [font.render(text, True, (64, 61, 57)) if i != selection else font.render(text, True, FONT_COLOR) for
              (i, text) in enumerate(games)]
     textRects = [text.get_rect() for text in texts]
@@ -125,7 +124,7 @@ def game():
         if state == 'home':
             home()
         if state == 'game1':
-            state = game1(screen, font, clock, )
+            state = game1(screen, font, clock, enable_Vie_language)
         if state == 'game2':
             state = game2(screen, font, clock)
         if state == 'game3':
