@@ -25,6 +25,7 @@ moving_range_hard = [240, 440, 640, 840, 1040]
 speed_hard = 2
 enable_Vie_language = False
 
+
 class MyGame:
     batsketImg = pygame.image.load('sprites/basket_milk.png')
     batsketImg = pygame.transform.scale(batsketImg, (180, 400))
@@ -98,7 +99,7 @@ def play2():
     screen.blit(MyGame.batsketImg, MyGame.batsketImg.get_rect(center=(MyGame.basket.x_center, MyGame.basket.y_center)))
     if not enable_Vie_language:
         screen_text(f'Score: {MyGame.score}', (50, 50, 50), (150, 50))
-    else: 
+    else:
         screen_text(f'Điểm: {MyGame.score}', (50, 50, 50), (150, 50))
 
     # key_pressed_is = pygame.key.get_pressed()
@@ -130,9 +131,9 @@ def need_help():
 
     if not enable_Vie_language:
         help_text = 'How to Play'
-        desc_text = "Select the right shape following the description"
-        option0_text = "To change selection - move palm left or right"
-        option1_text = "To select - make a fist"
+        desc_text = "Collect eggs with basket, collect milk with large bottle"
+        option0_text = "To move container - move palm left or right"
+        option1_text = "To convert between bottle and basket - rotate palm"
         option2_text = "Make a fist to close this window"
     else:
         help_text = 'Cách chơi'
@@ -140,7 +141,6 @@ def need_help():
         option0_text = "Để di chuyển đồ hứng - lắc bàn tay sang trái/phải"
         option1_text = "Để chuyển đổi giữa giỏ và bình - xoay lòng bàn tay"
         option2_text = "Nắm chặt bàn tay để đóng cửa sổ này"
-
 
     text_surface = font_popup.render(help_text, True, (255, 99, 71))
     text_rect = text_surface.get_rect()

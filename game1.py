@@ -24,6 +24,7 @@ bg_image = pygame.image.load(os.path.join("sprites", "bg.png"))
 bg_image_resized = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 enable_Vie_language = False
 
+
 class MyGame:
     def __init__(self, enable_Vie_language):
         self.answer_list = None
@@ -138,7 +139,7 @@ def draw_shape_color(color, shape, index, num_answer, shape_width):
         pygame.draw.polygon(screen, color, star_points)
         pygame.draw.polygon(screen, border_color, star_points, border_width)
 
-    if shape == 'diamond'or shape == 'kim cương' :
+    if shape == 'diamond' or shape == 'kim cương':
         diamond_points = [(shape_rect[0] + shape_width // 2, shape_rect[1]),  # top point
                           (shape_rect[0] + shape_width, shape_rect[1] + shape_width // 2),  # right point
                           (shape_rect[0] + shape_width // 2, shape_rect[1] + shape_width),  # bottom point
@@ -170,19 +171,18 @@ def screen_text(text, color, center):
 
 
 def play(my_game):
-    global title_rect
     color_map = {my_game.color_code_list[i]: my_game.color_list[i] for i in range(len(my_game.color_code_list))}
     screen.blit(bg_image_resized, (0, 0))
     if not enable_Vie_language:
         screen_text(f'Score: {my_game.score}', (50, 50, 50), (150, 50))
         screen_text(f'Choose the {color_map[my_game.correct_answer[0]]} {my_game.correct_answer[1]}',
-                                (50, 50, 50),
-                                (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3))
+                    (50, 50, 50),
+                    (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3))
     else:
         screen_text(f'Điểm: {my_game.score}', (50, 50, 50), (150, 50))
         screen_text(f'Chọn hình {my_game.correct_answer[1]} màu {color_map[my_game.correct_answer[0]]}',
-                                (50, 50, 50),
-                                (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3))
+                    (50, 50, 50),
+                    (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3))
     shape_width = my_game.shape_width
     selection = my_game.selection
     if my_game.num_answer == 3:
@@ -293,7 +293,6 @@ def game1(home_screen, home_font, home_clock, language):
     enable_Vie_language = language
     my_game_1 = MyGame(enable_Vie_language)
 
-
     while True:
         if state_game_1 == 'play1':
             play(my_game_1)
@@ -319,11 +318,9 @@ def game1(home_screen, home_font, home_clock, language):
                         else:
                             exit = 1
 
-        if (is_first_time):
+        if is_first_time:
             need_help()
             is_first_time = False
-        
-
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:

@@ -10,6 +10,8 @@ pygame.mixer.init(44100, -16, 2, 2048)
 pygame.init()
 pygame.font.init()
 pygame.font.get_init()
+Ico = pygame.image.load("sprites/BK.png")
+pygame.display.set_icon(Ico)
 
 clock = pygame.time.Clock()
 font = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 40)
@@ -23,14 +25,14 @@ state = 'home'
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 selection = 0
 enable_setting = False
-enable_music = False
-enable_Vie_language = True
+enable_music = True
+enable_Vie_language = False
 setting_selection = 0
 is_playing_music = False
 
 
 def game_list(selection):
-    games = ['1. Shapes and Colors', '2. Eggs and Milk', '3. Dino Run'] 
+    games = ['1. Shapes and Colors', '2. Eggs and Milk', '3. Dino Run']
     texts = [font.render(text, True, (64, 61, 57)) if i != selection else font.render(text, True, FONT_COLOR) for
              (i, text) in enumerate(games)]
     textRects = [text.get_rect() for text in texts]
@@ -55,11 +57,11 @@ def setting_list(selection):
         for
         (i, text) in enumerate(games)]
     textRects = [text.get_rect() for text in texts]
-    textRects[0].midleft = (SCREEN_WIDTH // 3, 300)
+    textRects[0].midleft = (SCREEN_WIDTH // 3, 350)
     textRects[0].centerx = SCREEN_WIDTH // 2
-    textRects[1].midleft = (SCREEN_WIDTH // 3, 350)
+    textRects[1].midleft = (SCREEN_WIDTH // 3, 400)
     textRects[1].centerx = SCREEN_WIDTH // 2
-    textRects[2].midleft = (SCREEN_WIDTH // 3, 400)
+    textRects[2].midleft = (SCREEN_WIDTH // 3, 450)
     textRects[2].centerx = SCREEN_WIDTH // 2
 
     [screen.blit(text, textRect) for text, textRect in zip(texts, textRects)]
@@ -85,7 +87,7 @@ def home():
     screen.blit(text2, textRect2)
 
     if enable_setting:
-        screen.fill(WHITE_COLOR)
+        # screen.fill(WHITE_COLOR)
         if not enable_Vie_language:
             text2 = font_setting.render('Settings', True, FONT_COLOR)
             text3 = font.render('Settings', True, (255, 99, 71))
@@ -97,12 +99,12 @@ def home():
         textRect2.center = (SCREEN_WIDTH - 100, 50)
         screen.blit(text2, textRect2)
 
-        popup_rect = pygame.Rect(SCREEN_WIDTH // 4, SCREEN_HEIGHT // 4, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3 + 25)
+        popup_rect = pygame.Rect(SCREEN_WIDTH // 4, SCREEN_HEIGHT // 4 + 50, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3 + 25)
         pygame.draw.rect(screen, WHITE_COLOR, popup_rect)
         pygame.draw.rect(screen, (0, 0, 0), popup_rect, 1)
 
         textRect3 = text3.get_rect()
-        textRect3.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
+        textRect3.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3 + 50)
         screen.blit(text3, textRect3)
         setting_list(setting_selection)
 
@@ -128,7 +130,7 @@ def game():
         if state == 'game2':
             state = game2(screen, font, clock, enable_Vie_language)
         if state == 'game3':
-            state = game3(screen, font, clock)
+            state = game3(screen, font, clock, enable_Vie_language)
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:

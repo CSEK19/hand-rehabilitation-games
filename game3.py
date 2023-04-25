@@ -11,9 +11,7 @@ state_game_3 = 'play3'
 screen = None
 font = None
 clock = None
-
-Ico = pygame.image.load("sprites/DinoWallpaper.png")
-pygame.display.set_icon(Ico)
+enable_Vie_language = False
 
 RUNNING = [
     pygame.image.load(os.path.join("sprites/Dino", "DinoRun1.png")),
@@ -202,12 +200,15 @@ def main():
     pause = False
 
     def score():
-        global points, game_speed, font
+        global points, game_speed, font, enable_Vie_language
         points += 0.05
         if int(points) % 5 == 0 and int(points) != 0 and int(points) <= 100:
             points += 0.01
             game_speed += 0.02
-        text = font.render("Score: " + str(int(points)), True, FONT_COLOR)
+        if not enable_Vie_language:
+            text = font.render("Score: " + str(int(points)), True, FONT_COLOR)
+        else:
+            text = font.render("Điểm: " + str(int(points)), True, FONT_COLOR)
         textRect = text.get_rect()
         textRect.center = (150, 50)
         screen.blit(text, textRect)
@@ -223,7 +224,7 @@ def main():
         x_pos_bg -= game_speed
 
     def need_help():
-        global screen
+        global screen, enable_Vie_language
         nonlocal pause
         pause = True
 
@@ -233,34 +234,43 @@ def main():
         font_popup = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 40)
         font_popup_text = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 30)
 
-        text_surface = font_popup.render("How to Play", True, (255, 99, 71))
+        if not enable_Vie_language:
+            help_text = 'How to Play'
+            desc_text = "Control the dinosaur to avoid obstacles as much as possible"
+            option0_text = "To jump - move palm up"
+            option1_text = "To duck - move palm down"
+            option2_text = "Make a fist to continue"
+        else:
+            help_text = 'Cách chơi'
+            desc_text = "Điều khiển chú khủng long tránh các chướng ngại vật"
+            option0_text = "Để nhảy - di chuyển lòng bàn tay hướng lên"
+            option1_text = "Để cúi - di chuyển lòng bàn tay hướng xuống"
+            option2_text = "Nắm chặt bàn tay để tiếp tục"
+
+        text_surface = font_popup.render(help_text, True, (255, 99, 71))
         text_rect = text_surface.get_rect()
         text_rect.centerx = popup_surface.get_rect().centerx
         text_rect.top = 20
         popup_surface.blit(text_surface, text_rect)
 
-        desc_text = "Control the dinosaur to avoid obstacles as much as possible"
         desc_surface = font_popup_text.render(desc_text, True, FONT_COLOR)
         desc_rect = desc_surface.get_rect()
         desc_rect.centerx = popup_surface.get_rect().centerx
         desc_rect.top = 75
         popup_surface.blit(desc_surface, desc_rect)
 
-        option0_text = "To jump - move palm up"
         option0_surface = font_popup_text.render(option0_text, True, DEFAULT_COLOR)
         option0_rect = option0_surface.get_rect()
         option0_rect.centerx = popup_surface.get_rect().centerx
         option0_rect.top = 125
         popup_surface.blit(option0_surface, option0_rect)
 
-        option1_text = "To duck - move palm down"
         option1_surface = font_popup_text.render(option1_text, True, DEFAULT_COLOR)
         option1_rect = option1_surface.get_rect()
         option1_rect.centerx = popup_surface.get_rect().centerx
         option1_rect.top = 175
         popup_surface.blit(option1_surface, option1_rect)
 
-        option2_text = "Make a fist to continue"
         option2_surface = font_popup_text.render(option2_text, True, FONT_COLOR)
         option2_rect = option2_surface.get_rect()
         option2_rect.centerx = popup_surface.get_rect().centerx
@@ -279,20 +289,25 @@ def main():
                     return
 
     def option_list(selection):
-        global screen
+        global screen, enable_Vie_language
         popup_width, popup_height = 600, 160
         popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
         popup_surface.fill((211, 211, 211, 0))  # set alpha to 0
         font_popup = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 40)
         font_popup_text = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 30)
 
-        text_surface = font_popup.render("Game Paused", True, (255, 99, 71))
+        if not enable_Vie_language:
+            text_surface = font_popup.render("Game Paused", True, (255, 99, 71))
+            options = ['Continue', 'Home']
+        else:
+            text_surface = font_popup.render("Trò chơi tạm dừng", True, (255, 99, 71))
+            options = ['Tiếp tục', 'Quay lại màn hình chính']
+
         text_rect = text_surface.get_rect()
         text_rect.centerx = popup_surface.get_rect().centerx
         text_rect.top = 20
         popup_surface.blit(text_surface, text_rect)
 
-        options = ['Continue', 'Home']
         texts = [
             font_popup_text.render(text, True, DEFAULT_COLOR) if i != selection else font_popup_text.render(text, True,
                                                                                                             FONT_COLOR)
@@ -388,13 +403,16 @@ def main():
 
 
 def replay_or_return(selection):
-    global screen
+    global screen, enable_Vie_language
     popup_width, popup_height = 600, 160
     popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
     popup_surface.fill((211, 211, 211, 0))  # set alpha to 0
     font_popup_text = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 30)
 
-    options = ['Replay', 'Home']
+    if not enable_Vie_language:
+        options = ['Replay', 'Home']
+    else:
+        options = ['Chơi lại', 'Quay về màn hình chính']
     texts = [font_popup_text.render(text, True, DEFAULT_COLOR) if i != selection else font_popup_text.render(text, True,
                                                                                                              FONT_COLOR)
              for (i, text) in enumerate(options)]
@@ -413,14 +431,15 @@ def replay_or_return(selection):
     pygame.display.update()
 
 
-def game3(home_screen, home_font, home_clock):
-    global points, death_count, state_game_3, screen, font, clock
+def game3(home_screen, home_font, home_clock, lang):
+    global points, death_count, state_game_3, screen, font, clock, enable_Vie_language
     screen = home_screen
     font = home_font
     clock = home_clock
     run = True
     exit = 0
     selection = 0
+    enable_Vie_language = lang
 
     while run:
         if state_game_3 == 'play3':
@@ -430,11 +449,15 @@ def game3(home_screen, home_font, home_clock):
             state_game_3 = 'play3'
         else:
             screen.fill(WHITE_COLOR)
-            score = font.render("Your Score: " + str(round(points)), True, FONT_COLOR)
+            if not enable_Vie_language:
+                score = font.render("Your Score: " + str(round(points)), True, FONT_COLOR)
+                text = font.render("Game Over", True, (255, 99, 71))
+            else:
+                score = font.render("Điểm của bạn: " + str(round(points)), True, FONT_COLOR)
+                text = font.render("Trò chơi kết thúc", True, (255, 99, 71))
             scoreRect = score.get_rect()
             scoreRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50)
             screen.blit(score, scoreRect)
-            text = font.render("Game Over", True, (255, 99, 71))
             textRect = text.get_rect()
             textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
             screen.blit(text, textRect)
