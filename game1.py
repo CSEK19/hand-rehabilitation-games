@@ -325,12 +325,12 @@ def game1(home_screen, home_font, home_clock):
                     elif event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
                         my_game_1.switch_selection(event.key)
                     elif event.key == pygame.K_b:
-                        exit = False
+                        exit = True
                     elif event.key == pygame.K_h:
                         need_help()
                         play(my_game_1)
             if event.type == pygame.QUIT:
-                exit = False
+                exit = True
         if exit:
             state_game_1 = 'play1'
             my_game_1.score = 0
