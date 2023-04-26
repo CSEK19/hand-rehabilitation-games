@@ -242,9 +242,9 @@ def main():
             option2_text = "Make a fist to continue"
         else:
             help_text = 'Cách chơi'
-            desc_text = "Điều khiển chú khủng long tránh các chướng ngại vật"
-            option0_text = "Để nhảy - di chuyển lòng bàn tay hướng lên"
-            option1_text = "Để cúi - di chuyển lòng bàn tay hướng xuống"
+            desc_text = "Điều khiển chú khủng long để tránh các chướng ngại vật"
+            option0_text = "Để nhảy - lắc cổ tay hướng lên"
+            option1_text = "Để cúi - lắc cổ tay hướng xuống"
             option2_text = "Nắm chặt bàn tay để tiếp tục"
 
         text_surface = font_popup.render(help_text, True, (255, 99, 71))

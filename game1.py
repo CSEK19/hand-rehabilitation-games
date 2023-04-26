@@ -206,7 +206,7 @@ def play(my_game):
 
 
 def need_help():
-    popup_width, popup_height = 800, 300
+    popup_width, popup_height = 1000, 300
     popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
     popup_surface.fill((211, 211, 211, 255))  # set alpha to 0
     font_popup = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 40)
@@ -215,13 +215,13 @@ def need_help():
     if not enable_Vie_language:
         help_text = 'How to Play'
         desc_text = "Select the right shape following the description"
-        option0_text = "To change selection - move palm left or right"
+        option0_text = "    "
         option1_text = "To select - make a fist"
         option2_text = "Make a fist to close this window"
     else:
         help_text = 'Cách chơi'
         desc_text = "Chọn hình đúng theo mô tả"
-        option0_text = "Để thay đổi lựa chọn - lắc bàn tay trái/phải"
+        option0_text = "Để thay đổi lựa chọn - lắc cổ tay sang trái/phải"
         option1_text = "Để chọn - nắm chặt bàn tay"
         option2_text = "Nắm chặt bàn tay để đóng cửa sổ này"
 

@@ -123,7 +123,7 @@ def need_help():
     global screen
     pause = True
 
-    popup_width, popup_height = 800, 300
+    popup_width, popup_height = 1000, 300
     popup_surface = pygame.Surface((popup_width, popup_height), pygame.SRCALPHA)
     popup_surface.fill((211, 211, 211, 255))  # set alpha to 0
     font_popup = pygame.font.Font('Be_Vietnam_Pro/BeVietnamPro-Black.ttf', 40)
@@ -138,8 +138,8 @@ def need_help():
     else:
         help_text = 'Cách chơi'
         desc_text = "Thu nhặt trứng bằng giỏ, thu thập sữa bằng bình"
-        option0_text = "Để di chuyển đồ hứng - lắc bàn tay sang trái/phải"
-        option1_text = "Để chuyển đổi giữa giỏ và bình - xoay lòng bàn tay"
+        option0_text = "Để di chuyển đồ hứng - lắc cổ tay sang trái/phải"
+        option1_text = "Để chuyển đổi giữa giỏ và bình - xoay cổ tay"
         option2_text = "Nắm chặt bàn tay để đóng cửa sổ này"
 
     text_surface = font_popup.render(help_text, True, (255, 99, 71))
