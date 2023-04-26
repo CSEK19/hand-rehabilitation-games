@@ -22,7 +22,7 @@ music = pygame.mixer.Sound('music/music.mp3')
 music.set_volume(0.5)
 
 state = 'home'
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = None
 selection = 0
 enable_setting = False
 enable_music = True
@@ -112,7 +112,10 @@ def home():
         game_list(selection)
 
 
-def game():
+def game(screen_val):
+    global screen
+    screen = screen_val
+    
     global state, selection, enable_setting, setting_selection, enable_music, enable_Vie_language, is_playing_music
 
     while True:
