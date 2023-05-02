@@ -8,7 +8,6 @@ import pygame
 def HGRHandler():
     while True:
         time.sleep(1)
-        print(123)
 
 if __name__ == "__main__":    
     p1 = multiprocessing.Process(target=HGRHandler)

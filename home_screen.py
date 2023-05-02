@@ -75,7 +75,7 @@ def home():
         text2 = font_setting.render('Settings', True, (64, 61, 57))
 
     else:
-        text1 = font.render('Trò chơi tập luyện và phục hồi khả năng sử dụng tay', True, FONT_COLOR)
+        text1 = font.render('Trò chơi tập luyện và phục hồi chức năng tay', True, FONT_COLOR)
         text2 = font_setting.render('Cài đặt', True, (64, 61, 57))
 
     textRect1 = text1.get_rect()
