@@ -215,7 +215,7 @@ def need_help():
     if not enable_Vie_language:
         help_text = 'How to Play'
         desc_text = "Select the right shape following the description"
-        option0_text = "    "
+        option0_text = "To change selection - move palm left or right"
         option1_text = "To select - make a fist"
         option2_text = "Make a fist to close this window"
     else:
